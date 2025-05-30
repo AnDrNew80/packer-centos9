@@ -23,9 +23,9 @@ source "virtualbox-iso" "centos9" {
   http_directory         = "http"
   http_port_min          = 9000
   http_port_max          = 9090
-  output_directory = "D:/packer_output/centos9new"
+  output_directory       = "D:/packer_output/centos9new"
   ssh_username           = "vagrant"
-  ssh_password           = "test1"
+  ssh_password           = "YOURPASSWORD"
   ssh_timeout            = "240m"
   ssh_handshake_attempts = 200
   shutdown_command       = "echo 'vagrant' | sudo -S shutdown -P now"
@@ -33,7 +33,14 @@ source "virtualbox-iso" "centos9" {
 
   boot_command = [
     "<tab><wait>",
-    "inst.text inst.ks=http://{{ .HTTPIP }}:{{ .HTTPPort }}/ks.cfg<enter>"
+	"inst.text inst.ks=http://{{ .HTTPIP }}:{{ .HTTPPort }}/ks.cfg<enter>"
+    #if option above will not work try: "inst.text inst.ks=http://YOURLOCALIP:{{ .HTTPPort }}/ks.cfg<enter>"
+  ]
+
+  vboxmanage = [
+	["modifyvm", "{{ .Name }}", "--nic1", "nat"],
+    ["modifyvm", "{{.Name}}", "--nic1", "bridged"],
+    ["modifyvm", "{{.Name}}", "--bridgeadapter1", "Realtek PCIe GbE Family Controller"]
   ]
 }
 
